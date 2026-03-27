@@ -44,41 +44,67 @@ const MOCK_POSTS: GPost[] = [
 
 export const googleSheetsService = {
   async getPosts(): Promise<GPost[]> {
-    // Attempt to fetch from real API, but fallback to mock data if it fails or keys are missing
     const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
     const SPREADSHEET_ID = import.meta.env.VITE_SPREADSHEET_ID;
     const SHEET_NAME = import.meta.env.VITE_SHEET_NAME || "Sheet1";
 
-    if (!API_KEY || !SPREADSHEET_ID) {
-      console.warn("Using mock data because Google Sheets configuration is missing.");
+    if (!SPREADSHEET_ID) {
+      console.warn("Using mock data because Spreadsheet ID is missing.");
       return MOCK_POSTS;
     }
 
     const range = `${SHEET_NAME}!A2:H100`;
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${API_KEY}`;
+    const standardUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${API_KEY}`;
+    const fallbackUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
 
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.warn("Failed to fetch from Google Sheets, using mock data.");
-        return MOCK_POSTS;
+      // 1. Try standard API if key is available
+      if (API_KEY) {
+        const response = await fetch(standardUrl);
+        if (response.ok) {
+          const data = await response.json();
+          const rows = data.values || [];
+          if (rows.length > 0) {
+            return rows.map((row: any[]) => ({
+              id: String(row[0] || ""),
+              title: String(row[1] || ""),
+              slug: String(row[2] || ""),
+              date: String(row[3] || ""),
+              author: String(row[4] || ""),
+              image_url: String(row[5] || ""),
+              excerpt: String(row[6] || ""),
+              content: String(row[7] || ""),
+            }));
+          }
+        }
       }
-      
-      const data = await response.json();
-      const rows = data.values || [];
+
+      // 2. Fallback to GViz API (Public Data)
+      console.log("Attempting fallback to GViz API...");
+      const fallbackResponse = await fetch(fallbackUrl);
+      if (!fallbackResponse.ok) throw new Error("Fallback fetch failed");
+
+      const text = await fallbackResponse.text();
+      // Remove the prefix (google.visualization.Query.setResponse() and the closing ;)
+      const jsonText = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+      const jsonData = JSON.parse(jsonText);
+      const rows = jsonData.table.rows || [];
 
       if (rows.length === 0) return MOCK_POSTS;
 
-      return rows.map((row: any[]) => ({
-        id: row[0] || "",
-        date: row[1] || "",
-        slug: row[2] || "",
-        title: row[3] || "",
-        content: row[4] || "",
-        excerpt: row[5] || "",
-        image_url: row[6] || "",
-        author: row[7] || "",
-      }));
+      return rows.map((row: any) => {
+        const c = row.c;
+        return {
+          id: String(c[0]?.v ?? ""),
+          title: String(c[1]?.v ?? ""),
+          slug: String(c[2]?.v ?? ""),
+          date: String(c[3]?.f ?? c[3]?.v ?? ""),
+          author: String(c[4]?.v ?? ""),
+          image_url: String(c[5]?.v ?? ""),
+          excerpt: String(c[6]?.v ?? ""),
+          content: String(c[7]?.v ?? ""),
+        };
+      });
     } catch (error) {
       console.error("Error fetching Google Sheets data, using mock data:", error);
       return MOCK_POSTS;
