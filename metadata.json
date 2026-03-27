@@ -1,0 +1,5 @@
+{
+  "name": "WordPress React Blog",
+  "description": "A modern React blog framework connected to WordPress REST API",
+  "requestFramePermissions": []
+}
