@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Menu, X, BookOpen, Table } from "lucide-react";
+import { Menu, X, BookOpen } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/src/lib/utils";
 
@@ -37,9 +37,8 @@ export default function Navbar() {
               href={spreadsheetUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-1.5 rounded-full text-sm font-semibold transition-all border border-indigo-100"
+              className="text-gray-600 hover:text-indigo-600 transition-colors font-medium"
             >
-              <Table className="w-4 h-4" />
               Spreadsheet
             </a>
           </div>
@@ -79,9 +78,8 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 px-3 py-2 text-indigo-600 font-semibold"
+            className="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium"
           >
-            <Table className="w-4 h-4" />
             Spreadsheet
           </a>
         </div>
