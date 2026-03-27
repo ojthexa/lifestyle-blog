@@ -49,8 +49,8 @@ export const googleSheetsService = {
     const SPREADSHEET_ID = import.meta.env.VITE_SPREADSHEET_ID;
     const SHEET_NAME = import.meta.env.VITE_SHEET_NAME || "Sheet1";
 
-    if (!API_KEY || !SPREADSHEET_ID || API_KEY === "AIzaSyCOqjPQ25AD-pT0-2tsEYuD2uv3z77nM6M") {
-      console.warn("Using mock data because Google Sheets API Key is missing or default.");
+    if (!API_KEY || !SPREADSHEET_ID) {
+      console.warn("Using mock data because Google Sheets configuration is missing.");
       return MOCK_POSTS;
     }
 
