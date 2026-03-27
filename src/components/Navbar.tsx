@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Menu, X, BookOpen, Table } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/src/lib/utils";
 
@@ -11,6 +11,8 @@ export default function Navbar() {
     { name: "Blog", href: "/blog" },
   ];
 
+  const spreadsheetUrl = "https://docs.google.com/spreadsheets/d/15UfOU_7siIOqSZdgMMnLsE1wixHT5eXbI_g28h72mTk/edit?gid=0#gid=0";
+
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +23,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex gap-8">
+          <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -31,6 +33,15 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            <a
+              href={spreadsheetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-4 py-1.5 rounded-full text-sm font-semibold transition-all border border-indigo-100"
+            >
+              <Table className="w-4 h-4" />
+              Spreadsheet
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -49,7 +60,7 @@ export default function Navbar() {
       <div
         className={cn(
           "md:hidden bg-white border-b border-gray-100 transition-all duration-300 overflow-hidden",
-          isOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
+          isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
         )}
       >
         <div className="px-4 pt-2 pb-4 space-y-1">
@@ -63,6 +74,16 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          <a
+            href={spreadsheetUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setIsOpen(false)}
+            className="flex items-center gap-2 px-3 py-2 text-indigo-600 font-semibold"
+          >
+            <Table className="w-4 h-4" />
+            Spreadsheet
+          </a>
         </div>
       </div>
     </nav>
