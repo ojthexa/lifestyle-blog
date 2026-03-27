@@ -4,8 +4,6 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Database, Zap, Shield } from "lucide-react";
 
 export default function Home() {
-  const spreadsheetUrl = "https://docs.google.com/spreadsheets/d/15UfOU_7siIOqSZdgMMnLsE1wixHT5eXbI_g28h72mTk/edit?gid=0#gid=0";
-
   return (
     <div className="bg-gray-950 text-gray-100 min-h-screen">
       {/* Hero Section */}
@@ -37,14 +35,6 @@ export default function Home() {
               >
                 Baca Blog <ArrowRight className="w-4 h-4" />
               </Link>
-              <a
-                href={spreadsheetUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="border border-gray-700 text-gray-300 px-8 py-4 font-bold hover:border-gray-500 hover:text-white transition-colors text-sm uppercase tracking-wider"
-              >
-                Google Sheets
-              </a>
             </div>
           </motion.div>
         </div>
