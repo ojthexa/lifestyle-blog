@@ -3,12 +3,17 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { format, isValid } from "date-fns";
 import { googleSheetsService, GPost } from "@/src/services/googleSheets";
-import { Loader2, Calendar, User } from "lucide-react";
+import { Loader2, Calendar, User, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/src/contexts/LanguageContext";
+
+const POSTS_PER_PAGE = 6;
 
 export default function Blog() {
   const [posts, setPosts] = useState<GPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const { t } = useLanguage();
 
   useEffect(() => {
     async function fetchPosts() {
@@ -16,7 +21,7 @@ export default function Blog() {
         const data = await googleSheetsService.getPosts();
         setPosts(data);
       } catch (err: any) {
-        setError(err?.message || "Gagal memuat postingan.");
+        setError(err?.message || "Failed to load posts.");
         console.error(err);
       } finally {
         setLoading(false);
@@ -30,18 +35,24 @@ export default function Blog() {
     return isValid(date) ? format(date, "MMM d, yyyy") : dateStr;
   };
 
+  const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE);
+  const paginatedPosts = posts.slice(
+    (currentPage - 1) * POSTS_PER_PAGE,
+    currentPage * POSTS_PER_PAGE
+  );
+
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center bg-gray-950">
-        <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
+      <div className="min-h-[60vh] flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-gray-950 min-h-[60vh] flex items-center justify-center px-4">
-        <div className="max-w-2xl p-8 bg-red-950/50 text-red-300 rounded border border-red-800 text-center">
+      <div className="bg-background min-h-[60vh] flex items-center justify-center px-4">
+        <div className="max-w-2xl p-8 bg-destructive/10 text-destructive rounded border border-destructive/30 text-center">
           <p className="font-medium">{error}</p>
         </div>
       </div>
@@ -50,44 +61,45 @@ export default function Blog() {
 
   if (posts.length === 0) {
     return (
-      <div className="bg-gray-950 min-h-[60vh] flex items-center justify-center px-4">
-        <div className="max-w-2xl p-8 bg-gray-900 text-gray-400 rounded border border-gray-800 text-center">
-          <p className="font-medium">Belum ada postingan yang ditemukan di Spreadsheet.</p>
+      <div className="bg-background min-h-[60vh] flex items-center justify-center px-4">
+        <div className="max-w-2xl p-8 bg-muted text-muted-foreground rounded border border-border text-center">
+          <p className="font-medium">{t.noPosts}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-950 min-h-screen text-gray-100">
+    <div className="bg-background min-h-screen text-foreground">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
         <header className="space-y-3">
-          <p className="text-amber-400 font-mono text-sm uppercase tracking-widest">Blog</p>
-          <h1 className="text-4xl font-black tracking-tight text-gray-100">Postingan Terbaru</h1>
-          <p className="text-gray-500 text-lg">Konten langsung dari Google Sheets.</p>
+          <p className="text-primary font-mono text-sm uppercase tracking-widest">{t.blog}</p>
+          <h1 className="text-4xl font-black tracking-tight">{t.latestPosts}</h1>
+          <p className="text-muted-foreground text-lg">{t.blogSubtitle}</p>
         </header>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-800">
-          {posts.map((post, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-border">
+          {paginatedPosts.map((post, index) => (
             <motion.article
               key={post.id || index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.08 }}
-              className="bg-gray-950 p-0 flex flex-col"
+              className="bg-background p-0 flex flex-col"
             >
               {post.image_url && (
                 <Link to={`/blog/${post.slug}`} className="block aspect-video overflow-hidden">
                   <img
                     src={post.image_url}
                     alt={post.title}
+                    loading="lazy"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500 opacity-80 hover:opacity-100"
                     referrerPolicy="no-referrer"
                   />
                 </Link>
               )}
               <div className="p-6 flex flex-col flex-1 space-y-4">
-                <div className="flex items-center gap-4 text-xs text-gray-600 font-mono">
+                <div className="flex items-center gap-4 text-xs text-muted-foreground font-mono">
                   <span className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
                     {formatDate(post.date)}
@@ -100,23 +112,46 @@ export default function Blog() {
                   )}
                 </div>
                 <Link to={`/blog/${post.slug}`}>
-                  <h2 className="text-lg font-bold text-gray-100 hover:text-amber-400 transition-colors line-clamp-2">
+                  <h2 className="text-lg font-bold hover:text-primary transition-colors line-clamp-2">
                     {post.title}
                   </h2>
                 </Link>
-                <p className="text-gray-500 text-sm line-clamp-3 flex-1">
+                <p className="text-muted-foreground text-sm line-clamp-3 flex-1">
                   {post.excerpt}
                 </p>
                 <Link
                   to={`/blog/${post.slug}`}
-                  className="text-amber-400 font-bold text-sm hover:text-amber-300 transition-colors uppercase tracking-wider pt-2"
+                  className="text-primary font-bold text-sm hover:opacity-80 transition-opacity uppercase tracking-wider pt-2"
                 >
-                  Baca →
+                  {t.read} →
                 </Link>
               </div>
             </motion.article>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 pt-8">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1 px-4 py-2 border border-border rounded text-sm font-mono text-muted-foreground hover:text-primary hover:border-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="w-4 h-4" /> {t.previous}
+            </button>
+            <span className="text-muted-foreground font-mono text-sm">
+              {t.page} {currentPage} {t.of} {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-1 px-4 py-2 border border-border rounded text-sm font-mono text-muted-foreground hover:text-primary hover:border-primary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              {t.next} <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
