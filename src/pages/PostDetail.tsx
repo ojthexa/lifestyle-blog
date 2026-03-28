@@ -34,73 +34,77 @@ export default function PostDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+      <div className="min-h-[60vh] flex items-center justify-center bg-gray-950">
+        <Loader2 className="w-10 h-10 text-amber-400 animate-spin" />
       </div>
     );
   }
 
   if (error || !post) {
     return (
-      <div className="max-w-2xl mx-auto mt-20 p-8 bg-red-50 text-red-700 rounded-2xl border border-red-100 text-center">
-        <p className="font-medium">{error || "Postingan tidak ditemukan"}</p>
-        <Link to="/blog" className="inline-block mt-4 text-indigo-600 hover:underline">
-          Kembali ke Blog
-        </Link>
+      <div className="bg-gray-950 min-h-[60vh] flex items-center justify-center px-4">
+        <div className="text-center space-y-4">
+          <p className="text-red-400 font-medium">{error || "Postingan tidak ditemukan"}</p>
+          <Link to="/blog" className="inline-block text-amber-400 hover:text-amber-300 font-bold text-sm uppercase tracking-wider">
+            ← Kembali ke Blog
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-    >
-      <Link
-        to="/blog"
-        className="inline-flex items-center gap-2 text-gray-500 hover:text-indigo-600 transition-colors mb-8 font-medium"
+    <div className="bg-gray-950 min-h-screen text-gray-100">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
       >
-        <ArrowLeft className="w-4 h-4" /> Kembali ke Blog
-      </Link>
+        <Link
+          to="/blog"
+          className="inline-flex items-center gap-2 text-gray-500 hover:text-amber-400 transition-colors mb-10 font-mono text-sm uppercase tracking-wider"
+        >
+          <ArrowLeft className="w-4 h-4" /> Kembali
+        </Link>
 
-      <article className="space-y-8">
-        <header className="space-y-6">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-            {post.title}
-          </h1>
-          <div className="flex items-center gap-6 text-gray-500 border-b border-gray-100 pb-8">
-            <span className="flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              {formatDate(post.date)}
-            </span>
-            {post.author && (
+        <article className="space-y-8">
+          <header className="space-y-6">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-gray-100 leading-[0.95]">
+              {post.title}
+            </h1>
+            <div className="flex items-center gap-6 text-gray-500 font-mono text-sm border-b border-gray-800 pb-8">
               <span className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Oleh {post.author}
+                <Calendar className="w-4 h-4" />
+                {formatDate(post.date)}
               </span>
-            )}
-          </div>
-        </header>
+              {post.author && (
+                <span className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  {post.author}
+                </span>
+              )}
+            </div>
+          </header>
 
-        {post.image_url && (
-          <div className="aspect-video rounded-3xl overflow-hidden shadow-xl">
-            <img
-              src={post.image_url}
-              alt={post.title}
-              className="w-full h-full object-cover"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-        )}
+          {post.image_url && (
+            <div className="aspect-video overflow-hidden">
+              <img
+                src={post.image_url}
+                alt={post.title}
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          )}
 
-        <div className="prose prose-indigo prose-lg max-w-none text-gray-700 leading-relaxed
-            prose-headings:text-gray-900 prose-headings:font-bold
-            prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
-            prose-img:rounded-2xl prose-img:shadow-md whitespace-pre-wrap">
-          {post.content}
-        </div>
-      </article>
-    </motion.div>
+          <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed
+              prose-headings:text-gray-100 prose-headings:font-bold
+              prose-a:text-amber-400 prose-a:no-underline hover:prose-a:underline
+              prose-img:rounded prose-strong:text-gray-200 whitespace-pre-wrap">
+            {post.content}
+          </div>
+        </article>
+      </motion.div>
+    </div>
   );
 }
