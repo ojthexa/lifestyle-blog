@@ -14,11 +14,11 @@ export default function Navbar() {
   const spreadsheetUrl = "https://docs.google.com/spreadsheets/d/15UfOU_7siIOqSZdgMMnLsE1wixHT5eXbI_g28h72mTk/edit?gid=0#gid=0";
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-800">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          <Link to="/" className="flex items-center gap-2 text-indigo-600 font-bold text-xl">
-            <BookOpen className="w-6 h-6" />
+          <Link to="/" className="flex items-center gap-2 text-amber-400 font-black text-xl tracking-tight">
+            <BookOpen className="w-5 h-5" />
             <span>Sheet Blog</span>
           </Link>
 
@@ -28,7 +28,7 @@ export default function Navbar() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="text-gray-600 hover:text-indigo-600 transition-colors font-medium"
+                className="text-gray-400 hover:text-amber-400 transition-colors font-mono text-sm uppercase tracking-wider"
               >
                 {link.name}
               </Link>
@@ -37,7 +37,7 @@ export default function Navbar() {
               href={spreadsheetUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-indigo-600 transition-colors font-medium"
+              className="text-gray-400 hover:text-amber-400 transition-colors font-mono text-sm uppercase tracking-wider"
             >
               Spreadsheet
             </a>
@@ -47,7 +47,7 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-600 hover:text-indigo-600 p-2"
+              className="text-gray-400 hover:text-amber-400 p-2"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -58,7 +58,7 @@ export default function Navbar() {
       {/* Mobile Nav */}
       <div
         className={cn(
-          "md:hidden bg-white border-b border-gray-100 transition-all duration-300 overflow-hidden",
+          "md:hidden bg-gray-950 border-b border-gray-800 transition-all duration-300 overflow-hidden",
           isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
         )}
       >
@@ -68,7 +68,7 @@ export default function Navbar() {
               key={link.name}
               to={link.href}
               onClick={() => setIsOpen(false)}
-              className="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium"
+              className="block px-3 py-2 text-gray-400 hover:text-amber-400 font-mono text-sm uppercase tracking-wider"
             >
               {link.name}
             </Link>
@@ -78,7 +78,7 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setIsOpen(false)}
-            className="block px-3 py-2 text-gray-600 hover:text-indigo-600 font-medium"
+            className="block px-3 py-2 text-gray-400 hover:text-amber-400 font-mono text-sm uppercase tracking-wider"
           >
             Spreadsheet
           </a>
